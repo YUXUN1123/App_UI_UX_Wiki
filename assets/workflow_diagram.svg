@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1380" width="100%" height="100%" style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;">
+  <defs>
+    <!-- Shadow Filter -->
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    
+    <!-- Marker Arrows -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-wiki-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#b91c1c"/>
+    </marker>
+    <marker id="arrow-html-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#c2410c"/>
+    </marker>
+    <marker id="arrow-pass" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#15803d"/>
+    </marker>
+  </defs>
+
+  <!-- Title & Description Header -->
+  <rect x="50" y="30" width="1000" height="90" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="550" y="68" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">LLM Wiki 到 HTML 互動簡報：完整實務工作流程圖</text>
+  <text x="550" y="98" text-anchor="middle" font-size="14" fill="#64748b">包含 10 大關鍵階段（主流程 Graph）與 2 大嚴謹品質迴圈（Wiki Loop 與 HTML Loop 修正回流）</text>
+
+  <!-- ==================== LOOP 1 CONTAINER (Wiki Loop) ==================== -->
+  <rect x="110" y="390" width="880" height="280" rx="16" fill="#fef2f2" fill-opacity="0.5" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <rect x="130" y="376" width="220" height="28" rx="6" fill="#ef4444"/>
+  <text x="240" y="395" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">品質檢核迴圈 1：Wiki Loop</text>
+
+  <!-- ==================== LOOP 2 CONTAINER (HTML Loop) ==================== -->
+  <rect x="110" y="890" width="880" height="280" rx="16" fill="#fff7ed" fill-opacity="0.5" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <rect x="130" y="876" width="230" height="28" rx="6" fill="#f97316"/>
+  <text x="245" y="895" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">品質檢核迴圈 2：HTML Loop</text>
+
+
+  <!-- ==================== STEP NODES ==================== -->
+
+  <!-- Node 1: 主題討論 -->
+  <g id="node1" filter="url(#card-shadow)">
+    <rect x="375" y="145" width="350" height="52" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="375" y="145" width="46" height="52" rx="10" fill="#0f172a"/>
+    <text x="398" y="177" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">01</text>
+    <text x="435" y="170" font-size="15" font-weight="700" fill="#0f172a">主題討論與問題意識確立</text>
+    <text x="435" y="187" font-size="12" fill="#64748b">為什麼有些 App 特別好用？核心對象初學者</text>
+  </g>
+
+  <!-- Node 2: Wiki 架構規劃 -->
+  <g id="node2" filter="url(#card-shadow)">
+    <rect x="375" y="225" width="350" height="52" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="375" y="225" width="46" height="52" rx="10" fill="#1e293b"/>
+    <text x="398" y="257" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">02</text>
+    <text x="435" y="250" font-size="15" font-weight="700" fill="#0f172a">Wiki 專案架構規劃</text>
+    <text x="435" y="267" font-size="12" fill="#64748b">規劃 AGENTS 規範、目錄骨架與 MOC 導覽</text>
+  </g>
+
+  <!-- Node 3: 資料蒐集 -->
+  <g id="node3" filter="url(#card-shadow)">
+    <rect x="375" y="305" width="350" height="52" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="375" y="305" width="46" height="52" rx="10" fill="#334155"/>
+    <text x="398" y="337" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">03</text>
+    <text x="435" y="330" font-size="15" font-weight="700" fill="#0f172a">學術資料蒐集與文獻審核</text>
+    <text x="435" y="347" font-size="12" fill="#64748b">登錄 sources_index.md（論文、專著、官方標準）</text>
+  </g>
+
+  <!-- Node 4: Wiki 文章生成 (in Loop 1) -->
+  <g id="node4" filter="url(#card-shadow)">
+    <rect x="375" y="420" width="350" height="54" rx="10" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+    <rect x="375" y="420" width="46" height="54" rx="10" fill="#0284c7"/>
+    <text x="398" y="453" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">04</text>
+    <text x="435" y="445" font-size="15" font-weight="700" fill="#0284c7">Wiki 理論文章生成（七篇）</text>
+    <text x="435" y="462" font-size="12" fill="#64748b">依據來源精準撰寫、雙向連結與專業概念界定</text>
+  </g>
+
+  <!-- Node 5: 內容檢查 (in Loop 1) -->
+  <g id="node5" filter="url(#card-shadow)">
+    <rect x="375" y="505" width="350" height="54" rx="10" fill="#ffffff" stroke="#e11d48" stroke-width="2"/>
+    <rect x="375" y="505" width="46" height="54" rx="10" fill="#e11d48"/>
+    <text x="398" y="538" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">05</text>
+    <text x="435" y="530" font-size="15" font-weight="700" fill="#e11d48">內容檢查與品質審核閘門</text>
+    <text x="435" y="547" font-size="12" fill="#64748b">零幻覺、學術邊界（Affordance/CLT）、引用核對</text>
+  </g>
+
+  <!-- Loop 1 Branch / Modification Box -->
+  <g id="loop1-mod" filter="url(#card-shadow)">
+    <rect x="745" y="455" width="220" height="58" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="855" y="480" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">發現問題：即時修正</text>
+    <text x="855" y="500" text-anchor="middle" font-size="11" fill="#7f1d1d">修正概念偏誤、補登來源 ID</text>
+  </g>
+
+  <!-- Node 6: 案例研究 -->
+  <g id="node6" filter="url(#card-shadow)">
+    <rect x="375" y="700" width="350" height="52" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="375" y="700" width="46" height="52" rx="10" fill="#475569"/>
+    <text x="398" y="732" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">06</text>
+    <text x="435" y="725" font-size="15" font-weight="700" fill="#0f172a">三大產品案例研究整合</text>
+    <text x="435" y="742" font-size="12" fill="#64748b">Google Maps、Notion、Duolingo 介面觀察實測</text>
+  </g>
+
+  <!-- Node 7: HTML 簡報大綱 -->
+  <g id="node7" filter="url(#card-shadow)">
+    <rect x="375" y="780" width="350" height="52" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="375" y="780" width="46" height="52" rx="10" fill="#475569"/>
+    <text x="398" y="812" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">07</text>
+    <text x="435" y="805" font-size="15" font-weight="700" fill="#0f172a">HTML 教學簡報大綱規劃</text>
+    <text x="435" y="822" font-size="12" fill="#64748b">轉換為適合初學者學習的 32 頁教學節奏</text>
+  </g>
+
+  <!-- Node 8: HTML 生成 (in Loop 2) -->
+  <g id="node8" filter="url(#card-shadow)">
+    <rect x="375" y="920" width="350" height="54" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+    <rect x="375" y="920" width="46" height="54" rx="10" fill="#ea580c"/>
+    <text x="398" y="953" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">08</text>
+    <text x="435" y="945" font-size="15" font-weight="700" fill="#ea580c">互動式 HTML 簡報程式生成</text>
+    <text x="435" y="962" font-size="12" fill="#64748b">16:9 自適應畫布、鍵盤控制、目錄跳轉、測驗題</text>
+  </g>
+
+  <!-- Node 9: 功能與版面檢查 (in Loop 2) -->
+  <g id="node9" filter="url(#card-shadow)">
+    <rect x="375" y="1005" width="350" height="54" rx="10" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+    <rect x="375" y="1005" width="46" height="54" rx="10" fill="#d97706"/>
+    <text x="398" y="1038" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">09</text>
+    <text x="435" y="1030" font-size="15" font-weight="700" fill="#d97706">功能、視覺與版面多輪審核</text>
+    <text x="435" y="1047" font-size="12" fill="#64748b">去 AI 模板感、無垂直捲動、大字清晰投影排版</text>
+  </g>
+
+  <!-- Loop 2 Branch / Modification Box -->
+  <g id="loop2-mod" filter="url(#card-shadow)">
+    <rect x="745" y="955" width="220" height="58" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+    <text x="855" y="980" text-anchor="middle" font-size="13" font-weight="700" fill="#c2410c">發現問題：迭代調整</text>
+    <text x="855" y="1000" text-anchor="middle" font-size="11" fill="#9a3412">重構米白學術風、調整圓角留白</text>
+  </g>
+
+  <!-- Node 10: 完成 -->
+  <g id="node10" filter="url(#card-shadow)">
+    <rect x="375" y="1200" width="350" height="56" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <rect x="375" y="1200" width="46" height="56" rx="12" fill="#16a34a"/>
+    <text x="398" y="1235" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">10</text>
+    <text x="435" y="1225" font-size="16" font-weight="700" fill="#15803d">專案完整驗收與 GitHub 發布</text>
+    <text x="435" y="1245" font-size="12" fill="#166534">知識庫成型、GitHub Pages 部署與簡報上線</text>
+  </g>
+
+
+  <!-- ==================== FLOW ARROWS ==================== -->
+
+  <!-- 1 -> 2 -->
+  <line x1="550" y1="197" x2="550" y2="223" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  
+  <!-- 2 -> 3 -->
+  <line x1="550" y1="277" x2="550" y2="303" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3 -> 4 -->
+  <line x1="550" y1="357" x2="550" y2="418" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4 -> 5 -->
+  <line x1="550" y1="474" x2="550" y2="503" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ==================== WIKI LOOP PATHS ==================== -->
+  <!-- 5 -> Loop1 Mod (發現問題) -->
+  <path d="M 725 532 L 855 532 L 855 515" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-wiki-loop)"/>
+  <rect x="735" y="518" width="80" height="20" rx="4" fill="#ffffff" stroke="#fca5a5" stroke-width="1"/>
+  <text x="775" y="532" text-anchor="middle" font-size="11" font-weight="700" fill="#b91c1c">未通過 / 修正</text>
+
+  <!-- Loop1 Mod -> 4 (回頭重新檢查) -->
+  <path d="M 855 455 L 855 447 L 727 447" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-wiki-loop)"/>
+  <rect x="745" y="437" width="80" height="20" rx="4" fill="#ffffff" stroke="#fca5a5" stroke-width="1"/>
+  <text x="785" y="451" text-anchor="middle" font-size="11" font-weight="700" fill="#b91c1c">重新撰寫審查</text>
+
+  <!-- 5 -> 6 (通過驗收) -->
+  <line x1="550" y1="559" x2="550" y2="698" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrow-pass)"/>
+  <rect x="555" y="615" width="85" height="22" rx="4" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="597" y="630" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d">通過品質檢核</text>
+
+  <!-- 6 -> 7 -->
+  <line x1="550" y1="752" x2="550" y2="778" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 7 -> 8 -->
+  <line x1="550" y1="832" x2="550" y2="918" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 8 -> 9 -->
+  <line x1="550" y1="974" x2="550" y2="1003" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ==================== HTML LOOP PATHS ==================== -->
+  <!-- 9 -> Loop2 Mod (發現問題) -->
+  <path d="M 725 1032 L 855 1032 L 855 1015" fill="none" stroke="#f97316" stroke-width="2" marker-end="url(#arrow-html-loop)"/>
+  <rect x="735" y="1018" width="80" height="20" rx="4" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
+  <text x="775" y="1032" text-anchor="middle" font-size="11" font-weight="700" fill="#c2410c">需要調整排版</text>
+
+  <!-- Loop2 Mod -> 8 (回頭重新測試) -->
+  <path d="M 855 955 L 855 947 L 727 947" fill="none" stroke="#f97316" stroke-width="2" marker-end="url(#arrow-html-loop)"/>
+  <rect x="745" y="937" width="80" height="20" rx="4" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
+  <text x="785" y="951" text-anchor="middle" font-size="11" font-weight="700" fill="#c2410c">重新調整測試</text>
+
+  <!-- 9 -> 10 (通過驗收) -->
+  <line x1="550" y1="1059" x2="550" y2="1198" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrow-pass)"/>
+  <rect x="555" y="1115" width="85" height="22" rx="4" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="597" y="1130" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d">通過驗收標準</text>
+
+  <!-- Footer Legend -->
+  <rect x="50" y="1290" width="1000" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="90" cy="1320" r="6" fill="#1e293b"/>
+  <text x="105" y="1324" font-size="12" fill="#334155">黑色/藍色：正向主流程（Graph）</text>
+  
+  <circle cx="340" cy="1320" r="6" fill="#ef4444"/>
+  <text x="355" y="1324" font-size="12" fill="#b91c1c">紅色虛線框與箭頭：Wiki 品質檢核迴圈（Wiki Loop）</text>
+  
+  <circle cx="680" cy="1320" r="6" fill="#f97316"/>
+  <text x="695" y="1324" font-size="12" fill="#c2410c">橘色虛線框與箭頭：HTML 簡報與排版迭代迴圈（HTML Loop）</text>
+</svg>
