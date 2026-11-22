@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>為什麼有些 App 特別好用？——從使用者心理到 UI/UX 設計的完整解析</title>
+  <style>
+    /* --------------------------------------------------
+       Editorial + Academic Keynote Visual System
+       Warm Paper / Off-white, Slate Text, Steel Blue Accent
+       -------------------------------------------------- */
+    :root {
+      --bg-page: #f4f1ea;
+      --bg-stage: #fcfbf9;
+      --bg-panel: #ffffff;
+      --bg-soft-blue: #f1f5f9;
+      --text-main: #1e252b;
+      --text-muted: #4e5760;
+      --text-light: #76818e;
+      --accent-steel: #2e4d6b;
+      --accent-blue-subtle: #4b6b8b;
+      --border-subtle: #e3ded6;
+      --border-soft: #d2cbbe;
+      --border-strong: #233446;
+      --alert-rose: #9c3333;
+      --alert-moss: #276341;
+      --font-serif: "Playfair Display", "Songti TC", "Source Han Serif TC", "Noto Serif CJK TC", "Baskerville", Georgia, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      --font-mono: "SF Mono", "Fira Code", Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    html, body {
+      font-size: 18px;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      position: relative;
+    }
+
+    /* Minimal Top Progress Line */
+    .progress-track {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(0, 0, 0, 0.05);
+      z-index: 100;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-steel);
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    /* Deck Viewport: Centers & Scales Fixed 16:9 Stage */
+    #deck-viewport {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    /* 16:9 Academic Keynote Stage (1600 x 900) */
+    #slide-stage {
+      width: 1600px;
+      height: 900px;
+      min-width: 1600px;
+      min-height: 900px;
+      max-width: 1600px;
+      max-height: 900px;
+      background: var(--bg-stage);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+      transform-origin: center center;
+    }
+
+    /* Slide Base */
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1600px;
+      height: 900px;
+      padding: 72px 96px 80px;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .slide-content-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Editorial Typography */
+    .slide-header {
+      margin-bottom: 28px;
+      border-bottom: 1.5px solid var(--border-subtle);
+      padding-bottom: 18px;
+    }
+
+    .slide-meta {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-steel);
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .slide-subtitle {
+      font-size: 25px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.45;
+      font-weight: 400;
+    }
+
+    /* Citation Tag */
+    .cite-tag {
+      font-size: 16px;
+      color: var(--text-light);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 12px;
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.2px;
+    }
+
+    /* Layout Archetypes */
+    .layout-columns-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .layout-columns-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 36px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .editorial-col {
+      display: flex;
+      flex-direction: column;
+      border-top: 2px solid var(--text-main);
+      padding-top: 18px;
+    }
+
+    .editorial-col.secondary {
+      border-top-color: var(--accent-steel);
+    }
+
+    .editorial-col-num {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      color: var(--accent-steel);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .editorial-col-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .editorial-col-body {
+      font-size: 23px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .editorial-col-body p {
+      margin-bottom: 12px;
+    }
+
+    .editorial-col-body ul {
+      padding-left: 24px;
+      margin-top: 8px;
+    }
+
+    .editorial-col-body li {
+      margin-bottom: 8px;
+    }
+
+    .editorial-col-body strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Soft Rounded Academic Panels */
+    .academic-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .academic-panel.tint-blue {
+      background: var(--bg-soft-blue);
+      border-color: #d8e2ea;
+    }
+
+    .academic-panel-tag {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-steel);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .academic-panel-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .academic-panel-body {
+      font-size: 23px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .academic-panel-body ul {
+      padding-left: 24px;
+      margin-top: 8px;
+    }
+
+    .academic-panel-body li {
+      margin-bottom: 8px;
+    }
+
+    .academic-panel-body strong {
+      color: var(--text-main);
+    }
+
+    /* High-contrast Academic Comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .compare-side {
+      display: flex;
+      flex-direction: column;
+      padding: 28px 36px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-top: 4px solid var(--border-strong);
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .compare-side.critical {
+      border-top-color: var(--alert-rose);
+      background: #fdfaf9;
+    }
+
+    .compare-side.exemplar {
+      border-top-color: var(--alert-moss);
+      background: #fafdfa;
+    }
+
+    .compare-tag {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .compare-tag.critical { color: var(--alert-rose); }
+    .compare-tag.exemplar { color: var(--alert-moss); }
+
+    .compare-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .compare-list {
+      font-size: 23px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding-left: 24px;
+    }
+
+    .compare-list li {
+      margin-bottom: 10px;
+    }
+
+    .compare-list strong {
+      color: var(--text-main);
+    }
+
+    /* Academic Formula Banner */
+    .math-hero {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-left: 5px solid var(--accent-steel);
+      border-radius: 14px;
+      padding: 24px 36px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .math-formula {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--accent-steel);
+      letter-spacing: 0.5px;
+    }
+
+    .math-note {
+      font-size: 22px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Flow Chart / Sequence Steps */
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      flex: 1;
+      align-items: stretch;
+      margin-top: 10px;
+    }
+
+    .flow-step-item {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 26px 22px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .flow-step-num {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-steel);
+      margin-bottom: 8px;
+    }
+
+    .flow-step-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .flow-step-body {
+      font-size: 20px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Interactive Quiz - Editorial Version */
+    .quiz-container {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-top: 4px solid var(--accent-steel);
+      border-radius: 16px;
+      padding: 38px 48px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .quiz-question {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 28px;
+      line-height: 1.45;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .quiz-opt {
+      background: var(--bg-stage);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      color: var(--text-main);
+      padding: 18px 26px;
+      font-size: 22px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .quiz-opt:hover {
+      background: #ffffff;
+      border-color: var(--accent-steel);
+    }
+
+    .quiz-opt.correct {
+      background: #f0f7f3 !important;
+      border-color: var(--alert-moss) !important;
+      color: var(--alert-moss) !important;
+      font-weight: 600;
+    }
+
+    .quiz-opt.wrong {
+      background: #fdf2f2 !important;
+      border-color: var(--alert-rose) !important;
+      color: var(--alert-rose) !important;
+      font-weight: 600;
+    }
+
+    .quiz-feedback {
+      margin-top: 20px;
+      padding: 18px 26px;
+      border-radius: 12px;
+      font-size: 21px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .quiz-feedback.show-correct {
+      display: block;
+      background: #f0f7f3;
+      border-left: 3px solid var(--alert-moss);
+      color: var(--alert-moss);
+    }
+
+    .quiz-feedback.show-wrong {
+      display: block;
+      background: #fdf2f2;
+      border-left: 3px solid var(--alert-rose);
+      color: var(--alert-rose);
+    }
+
+    /* Subtle Academic HUD (Bottom-Right) */
+    .hud-controls {
+      position: fixed;
+      bottom: 24px;
+      right: 32px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(251, 250, 248, 0.95);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .hud-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 12px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .hud-btn:hover {
+      background: #ffffff;
+      border-color: var(--accent-steel);
+    }
+
+    .hud-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .hud-indicator {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--text-muted);
+      padding: 0 8px;
+      min-width: 65px;
+      text-align: center;
+    }
+
+    .hud-chapter-badge {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-steel);
+      border-right: 1px solid var(--border-subtle);
+      padding-right: 10px;
+      margin-right: 4px;
+    }
+
+    /* Modal: Table of Contents */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(28, 32, 36, 0.4);
+      z-index: 200;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-container {
+      width: 1100px;
+      max-height: 82vh;
+      background: var(--bg-stage);
+      border: 1px solid var(--border-subtle);
+      padding: 36px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 16px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      background: #ffffff;
+      color: var(--text-main);
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .toc-item {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .toc-item:hover {
+      border-color: var(--accent-steel);
+    }
+
+    .toc-item.current {
+      border-left: 3px solid var(--accent-steel);
+      background: #f7f9fa;
+    }
+
+    .toc-item-num {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-steel);
+      margin-bottom: 4px;
+    }
+
+    .toc-item-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Linear Progress Line -->
+  <div class="progress-track">
+    <div id="progress-bar" class="progress-fill"></div>
+  </div>
+
+  <!-- Deck Viewport: Centers and Scales 16:9 Stage -->
+  <div id="deck-viewport">
+    <div id="slide-stage">
+<!-- ==================== SLIDE 01: 封面頁 ==================== -->
+    <div class="slide active" data-chapter="開場導引" data-title="簡報首頁">
+      <div class="slide-content-wrapper" style="justify-content: center; max-width: 1200px;">
+        <div class="slide-meta" style="margin-bottom: 24px;">Human-Computer Interaction & User Psychology Masterclass</div>
+        <h1 style="font-family: var(--font-serif); font-size: 72px; font-weight: 700; line-height: 1.15; color: var(--text-main); margin-bottom: 24px; letter-spacing: -1px;">
+          為什麼有些 App<br>特別好用？
+        </h1>
+        <p style="font-size: 28px; color: var(--text-muted); line-height: 1.5; max-width: 900px; margin-bottom: 40px; font-weight: 400;">
+          從使用者認知心理學、操作效率模型到現代介面倫理的完整解析
+        </p>
+        <div style="display: flex; align-items: center; gap: 32px; border-top: 1px solid var(--border-subtle); padding-top: 28px;">
+          <button class="hud-btn" style="padding: 12px 32px; font-size: 18px; font-weight: 600; background: var(--text-main); color: #ffffff; border-color: var(--text-main);" onclick="nextSlide()">
+            開始進入課程 →
+          </button>
+          <div style="font-size: 16px; color: var(--text-light); font-family: var(--font-mono);">
+            Knowledge Base: App UI/UX Wiki (SRC-01 ~ SRC-54 Verified)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 02: 學習目錄 ==================== -->
+    <div class="slide" data-chapter="開場導引" data-title="核心教學架構">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Curriculum Overview</div>
+          <h2 class="slide-title">教學架構地圖：解構好體驗的底層機制</h2>
+          <div class="slide-subtitle">本課程由淺入深，從人腦的認知極限出發，推導至產品實踐與科學評估</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="academic-panel tint-blue" onclick="goToSlide(2)" style="cursor: pointer; transition: transform 0.15s, border-color 0.15s;">
+            <div class="academic-panel-tag">Part I · Foundations</div>
+            <div class="academic-panel-title">認識本質與大腦</div>
+            <div class="academic-panel-body">
+              <p><strong>01. 生活體驗與本質差異</strong><br>叫車與購票痛點、UI 與 UX 甜甜圈模型、ISO 9241 易用性指標。</p>
+              <p><strong>02. 大腦如何理解介面</strong><br>心智模型、Affordance vs Signifier、工作記憶瓶頸與格式塔自組織。</p>
+            </div>
+          </div>
+          <div class="academic-panel tint-blue" onclick="goToSlide(11)" style="cursor: pointer; transition: transform 0.15s, border-color 0.15s;">
+            <div class="academic-panel-tag">Part II · Interaction & Ethics</div>
+            <div class="academic-panel-title">操作效率與設計倫理</div>
+            <div class="academic-panel-body">
+              <p><strong>03. 操作效率定律</strong><br>費茲定律物理移動耗時、席克定律決策對數模型與資訊架構四大支柱。</p>
+              <p><strong>04. 介面暗黑模式與反思</strong><br>欺瞞性設計手法、法規監管邊界與以人為本的倫理對照。</p>
+            </div>
+          </div>
+          <div class="academic-panel tint-blue" onclick="goToSlide(18)" style="cursor: pointer; transition: transform 0.15s, border-color 0.15s;">
+            <div class="academic-panel-tag">Part III · Studies & Evaluation</div>
+            <div class="academic-panel-title">產品案例與科學評估</div>
+            <div class="academic-panel-body">
+              <p><strong>05. 三大產品深度剖析</strong><br>Google Maps 空間減負、Notion 模組化積木、Duolingo 動機異化。</p>
+              <p><strong>06. 如何客觀評估好不好用</strong><br>專家啟發式評估、真人放聲思考測試、破除 5 人測試迷思。</p>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Navigate: 點擊上方任一單元卡片即可直接跳轉至該主題章節</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 03: 開場之問 ==================== -->
+    <div class="slide" data-chapter="第 1 章：認識 UI/UX" data-title="日常生活的體驗落差">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 01 · Foundations</div>
+          <h2 class="slide-title">開場之問：同樣是叫車或記筆記，為何落差如此巨大？</h2>
+          <div class="slide-subtitle">好用不是偶然的靈感，而是建立在對人類感知極限的精準同理</div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-side critical">
+            <div class="compare-tag critical">Frustrating UI · 令人焦慮的介面</div>
+            <div class="compare-title">高認知阻礙與控制感喪失</div>
+            <ul class="compare-list">
+              <li><strong>下一步不明確</strong>：資訊層級混亂，使用者必須耗費眼力掃描畫面尋找確認鍵。</li>
+              <li><strong>操作後果不可逆</strong>：缺乏撤銷（Undo）機制，每按一個按鍵都伴隨著犯錯的恐懼。</li>
+              <li><strong>阻力不對稱</strong>：開通付費只需 1 秒，尋找退訂入口卻要層層點擊長達數分鐘。</li>
+              <li><strong>生硬的系統報錯</strong>：以內部錯誤代碼指責使用者，未提供任何具體的修復方向。</li>
+            </ul>
+          </div>
+          <div class="compare-side exemplar">
+            <div class="compare-tag exemplar">Seamless UX · 行雲流水的體驗</div>
+            <div class="compare-title">直覺自明與平穩的心理安全感</div>
+            <ul class="compare-list">
+              <li><strong>感知線索明確</strong>：不需要思索，手指第一眼便知道核心互動區域位於何處。</li>
+              <li><strong>提供明確安全網</strong>：清晰呈現逃生通道與即時復原提示，鼓勵使用者安心探索。</li>
+              <li><strong>漸進式揭露資訊</strong>：只在任務推進的當下展示剛好足夠的內容，保護工作記憶。</li>
+              <li><strong>同理心引導錯誤</strong>：以清晰平實的日常語言解釋當前狀態，並提供一鍵修正方案。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cite-tag">Observation: 使用者體驗並非主觀品味，而是人機介面工程與認知心理學的嚴謹結合</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 04: UI vs UX 甜甜圈 ==================== -->
+    <div class="slide" data-chapter="第 1 章：認識 UI/UX" data-title="UI 與 UX 的本質差異">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 01 · Foundations</div>
+          <h2 class="slide-title">UI 與 UX 的本質界定：經典甜甜圈隱喻</h2>
+          <div class="slide-subtitle">UI 是你所「看見與觸摸」的表層，UX 是你「達成目標與感受」的全歷程</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">01 / Surface</div>
+            <div class="editorial-col-title">UI（User Interface，使用者介面）</div>
+            <div class="editorial-col-body">
+              <p>如同甜甜圈表面灑落的<strong>糖霜、色彩與巧克力脆片</strong>：</p>
+              <ul>
+                <li><strong>感官呈現維度</strong>：排版網格、字體階層、色彩對比、按鈕邊界與微動態效果。</li>
+                <li><strong>物理意符載體</strong>：透過視覺與聽覺線索，向使用者傳達此處存在的互動可能性。</li>
+                <li><strong>專業邊界</strong>：確保介面的可讀性、美學一致性與無障礙感官傳達。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">02 / Journey</div>
+            <div class="editorial-col-title">UX（User Experience，使用者體驗）</div>
+            <div class="editorial-col-body">
+              <p>如同甜甜圈的<strong>麵體口感、飽足感、消化過程與整體購買體驗</strong>：</p>
+              <ul>
+                <li><strong>任務達成價值</strong>：系統是否能無阻礙且不費吹灰之力地滿足使用者的核心意圖？</li>
+                <li><strong>全週期心理感受</strong>：從初次接觸、摸索、意外出錯到順利完成目標的全程情緒曲線。</li>
+                <li><strong>核心本質</strong>：即使 UI 再精緻，若操作卡頓或步驟繁瑣，整體體驗依然是失敗的。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-04 (Norman & Nielsen, 1998) "The first requirement for an exemplary user experience is to meet the exact needs of the customer, without fuss or bother."</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 05: ISO 9241 易用性 ==================== -->
+    <div class="slide" data-chapter="第 1 章：認識 UI/UX" data-title="好的體驗如何衡量？">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 01 · Foundations</div>
+          <h2 class="slide-title">易用性如何客觀衡量？ISO 9241-11 三大支柱</h2>
+          <div class="slide-subtitle">「好用」不是主觀感受的空話，而是國際標準中可量化測量的工程指標</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Criterion 01</div>
+            <div class="editorial-col-title">有效性 (Effectiveness)</div>
+            <div class="editorial-col-body">
+              <p><strong>使用者能否準確、完整地達成目標？</strong></p>
+              <ul>
+                <li><strong>任務完成率 (Success Rate)</strong>：無人引導下順利抵達終點的受試者比例。</li>
+                <li><strong>關鍵失誤率</strong>：未達成預期目標或放棄操作的頻次。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Criterion 02</div>
+            <div class="editorial-col-title">效率 (Efficiency)</div>
+            <div class="editorial-col-body">
+              <p><strong>為達成目標所投入的時間與資源成本？</strong></p>
+              <ul>
+                <li><strong>任務完成耗時 (Time on Task)</strong>：從起點到完成所需秒數。</li>
+                <li><strong>無效點擊與路徑回溯</strong>：迷航、重複點擊與折返路徑的次數。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Criterion 03</div>
+            <div class="editorial-col-title">滿意度 (Satisfaction)</div>
+            <div class="editorial-col-body">
+              <p><strong>互動過程中的心理接受度與舒適感？</strong></p>
+              <ul>
+                <li><strong>標準化心理量表</strong>：如 SUS（系統易用性量表）、SEQ 單題難度量表評分。</li>
+                <li><strong>心理安全與持續使用意願</strong>：操作時是否感到受控、可信賴。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-02 (ISO 9241-11:2018 Usability: Definitions and concepts); SRC-05 (Peter Morville, 2004 UX Honeycomb)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 06: 心智模型 ==================== -->
+    <div class="slide" data-chapter="第 2 章：大腦如何理解介面" data-title="心智模型與鴻溝">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 02 · Cognitive Psychology</div>
+          <h2 class="slide-title">心智模型與認知鴻溝：大腦如何過濾真實世界？</h2>
+          <div class="slide-subtitle">使用者並非直接與客觀程式碼互動，而是在腦中建構高度簡化的心理運作假說</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Construct 01</div>
+            <div class="editorial-col-title">心智模型、概念模型與系統映像</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>心智模型 (Mental Model)</strong>：使用者依據過去的生活常識與使用經驗，在心中預期系統「應該如何運作」。</li>
+                <li><strong>概念模型 (Conceptual Model)</strong>：設計團隊試圖傳達給使用者的運作架構（如電腦桌面、垃圾桶隱喻）。</li>
+                <li><strong>系統映像 (System Image)</strong>：使用者無法看穿設計師的大腦，<strong>只能透過介面外觀、說明與操作回饋</strong>來拼湊出心智模型。若系統映像斷裂，挫折便隨之產生。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Construct 02</div>
+            <div class="editorial-col-title">Don Norman 的兩大互動鴻溝</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>執行鴻溝 (Gulf of Execution)</strong>：<br>「我該怎麼做才能達成目標？」<br>當介面缺乏足夠的感知線索與清晰的按鈕時，使用者不知道第一步該按哪裡，執行鴻溝隨之擴大。</li>
+                <li><strong>評估鴻溝 (Gulf of Evaluation)</strong>：<br>「系統現在處於什麼狀態？剛才成功了嗎？」<br>若點擊後毫無動態或聲音回應，使用者將陷入對當前狀態的焦慮猜測。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-06 (Craik, 1943 The Nature of Explanation); SRC-07 (Johnson-Laird, 1983); SRC-10 (Norman, 2013)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 07: Affordance vs Signifier ==================== -->
+    <div class="slide" data-chapter="第 2 章：大腦如何理解介面" data-title="可供性與意符">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 02 · Cognitive Psychology</div>
+          <h2 class="slide-title">學理邊界澄清：可供性 (Affordance) vs. 意符 (Signifier)</h2>
+          <div class="slide-subtitle">初學者最常混為一談的兩大概念！嚴禁將 Affordance 簡化為「預設用途」</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Theoretical Origin</div>
+            <div class="editorial-col-title">可供性 / 行動可能性 (Affordance)</div>
+            <div class="editorial-col-body">
+              <p>源自生態心理學家 J. J. Gibson (1979) 的開創性定義：</p>
+              <ul>
+                <li><strong>本質屬性</strong>：物理環境或物體「實際提供給行動者的行動可能性」。</li>
+                <li><strong>客觀存在且獨立於感知</strong>：不取決於使用者是否察覺，但與行動者的身體能力息息相關（例如：椅子對成人具備「坐」的可供性，但對螞蟻則無）。</li>
+                <li><strong>在數位介面中</strong>：觸控螢幕的平面物理玻璃，提供了「手指按壓、滑動」的客觀可供性。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Interaction Design</div>
+            <div class="editorial-col-title">意符 / 提示標記 (Signifier)</div>
+            <div class="editorial-col-body">
+              <p>Don Norman 於 2013 年修訂版著作中重點校正的概念：</p>
+              <ul>
+                <li><strong>本質屬性</strong>：任何能向行動者傳達「此處存在何種行動可能性、該如何操作」的<strong>感知線索或符號標記</strong>。</li>
+                <li><strong>UI 的核心真相</strong>：螢幕上的所有凸起按鈕、文字底線、拖曳把手與下拉箭頭，<strong>全部都是 Signifiers</strong>！</li>
+                <li><strong>實踐價值</strong>：引導使用者的注意力，明確指引操作路徑，跨越執行鴻溝。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-08 (Gibson, 1979 Ecological Approach to Visual Perception); SRC-09 (Norman, 1988); SRC-10 (Norman, 2013 Revised Edition)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 08: Norman 原則 ==================== -->
+    <div class="slide" data-chapter="第 2 章：大腦如何理解介面" data-title="Norman 關鍵互動機制">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 02 · Cognitive Psychology</div>
+          <h2 class="slide-title">讓操作自然發生：Mapping、Feedback 與 Constraints</h2>
+          <div class="slide-subtitle">優秀的設計利用空間與邏輯規律，讓使用者無需費神推理即可直覺操作</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Principle 01</div>
+            <div class="editorial-col-title">自然對應 (Natural Mapping)</div>
+            <div class="editorial-col-body">
+              <p><strong>控制器與受控對象在空間位置或概念上的嚴格一致。</strong></p>
+              <ul>
+                <li><strong>生活典範</strong>：四口瓦斯爐開關依矩形方陣排列，旋轉左前旋鈕自然點燃左前爐火。</li>
+                <li><strong>反面設計</strong>：排成水平一直線的開關，迫使大腦每次都要重新推理。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Principle 02</div>
+            <div class="editorial-col-title">即時回饋 (Immediate Feedback)</div>
+            <div class="editorial-col-body">
+              <p><strong>在操作發生的瞬間，系統必須傳遞明確可感知的狀態回應。</strong></p>
+              <ul>
+                <li><strong>多模態增強</strong>：按鈕微下壓動態、觸覺震動、提示音效。</li>
+                <li><strong>核心目標</strong>：立即填補評估鴻溝，消除「系統是否卡死」的疑慮。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Principle 03</div>
+            <div class="editorial-col-title">約束機制 (Constraints)</div>
+            <div class="editorial-col-body">
+              <p><strong>限制無效的操作範圍，從根源防範使用者犯錯。</strong></p>
+              <ul>
+                <li><strong>物理約束</strong>：USB 插頭方向防呆、SIM 卡防呆切角。</li>
+                <li><strong>邏輯約束</strong>：未填妥必填欄位時送出鈕維持置灰；日期選擇器自動鎖定無效區間。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-10 (Donald A. Norman, 2013 The Design of Everyday Things: Revised and Expanded Edition)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 09: 認知負荷理論 ==================== -->
+    <div class="slide" data-chapter="第 2 章：大腦如何理解介面" data-title="工作記憶與認知負荷">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 02 · Cognitive Psychology</div>
+          <h2 class="slide-title">工作記憶瓶頸與認知負荷理論 (CLT)</h2>
+          <div class="slide-subtitle">人腦的短期運算資源極其匱乏，UI 設計的核心使命是「保護使用者的腦力」</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Memory Capacity</div>
+            <div class="editorial-col-title">工作記憶的有限容量：從 7 到 4</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>Miller (1956) 的 7±2</strong>：早期發現人類短期記憶廣度約為 7 個有意義的資訊組塊（Chunking），如將長串數字分段記憶。</li>
+                <li><strong>Cowan (2001) 的 4 組塊</strong>：現代嚴格心理實驗在排除語音複誦等輔助機制後證實，純工作記憶容量上限僅約 <strong>4 個組塊</strong>。</li>
+                <li><strong>教學警思</strong>：切勿在單一介面堆砌過多同層級選項，否則大腦將迅速進入超載狀態。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Cognitive Load</div>
+            <div class="editorial-col-title">認知負荷模型及其理論演進</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>內在認知負荷 (Intrinsic Load)</strong>：任務本身固有的難度與要素互動性（如報稅表單本身的複雜度）。</li>
+                <li><strong>外在認知負荷 (Extraneous Load)</strong>：<strong>由混亂排版與晦澀導覽所強加的無謂心智負擔</strong>——優秀介面必須全力消除此項負荷。</li>
+                <li><strong>理論演進說明</strong>：自 2010 年代後（Sweller 等人研究），學界已將 Germane Load 重新界定為「工作記憶主動投入基模（Schema）建構與自動化的心理歷程（Germane Processing）」，而非獨立存在的負荷類型。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-11 (Miller, 1956); SRC-12 (Sweller, 1988); SRC-13 (Sweller et al., 2011); SRC-16 (Cowan, 2001)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 10: 格式塔視覺原則 ==================== -->
+    <div class="slide" data-chapter="第 2 章：大腦如何理解介面" data-title="格式塔知覺組織法則">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 02 · Cognitive Psychology</div>
+          <h2 class="slide-title">視覺自組織本能：格式塔知覺組織法則 (Gestalt)</h2>
+          <div class="slide-subtitle">人類大腦在接收視覺刺激時，會自發性地依照幾何與空間關係尋找簡約秩序</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Law 01</div>
+            <div class="editorial-col-title">接近性原則 (Proximity)</div>
+            <div class="editorial-col-body">
+              <p><strong>空間物理距離較近的元素，大腦會本能地知覺為同一群組。</strong></p>
+              <ul>
+                <li><strong>介面排版實務</strong>：標題與其附屬文字的距離，必須顯著小於該標題與上方無關段落的留白距離。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Law 02</div>
+            <div class="editorial-col-title">相似性原則 (Similarity)</div>
+            <div class="editorial-col-body">
+              <p><strong>具有相似色彩、幾何形狀或尺寸的元素，被知覺為承載相同功能。</strong></p>
+              <ul>
+                <li><strong>介面排版實務</strong>：全域所有「主要行動按鈕（Primary Buttons）」必須維持一致的灰藍色調與字體規格。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Law 03</div>
+            <div class="editorial-col-title">共同區域 (Common Region)</div>
+            <div class="editorial-col-body">
+              <p><strong>被同一邊界封閉或處於同一背景區塊內的元素，被知覺為緊密關聯單元。</strong></p>
+              <ul>
+                <li><strong>介面排版實務</strong>：資訊分組容器的理論依據，透過細線框或微幅底色建立資訊邊界。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-17 (Wertheimer, 1923); SRC-18 (Koffka, 1935 Principles of Gestalt Psychology); SRC-19 (Palmer, 1992 Common Region)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 11: 互動測驗 1 ==================== -->
+    <div class="slide" data-chapter="第 2 章：大腦如何理解介面" data-title="心理學測驗">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Interactive Checkpoint 01 · Cognitive Psychology</div>
+          <h2 class="slide-title">隨堂思辨：防錯按鈕的底層機制是什麼？</h2>
+          <div class="slide-subtitle">請檢驗剛才學到的人機互動原則，判斷下列介面設計屬於哪一項機制</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">問題：在註冊流程中，若使用者尚未勾選「我已閱讀並同意服務條款」，底部的「送出註冊」按鈕呈現淺灰色且點擊毫無反應。這在 Don Norman 的設計原則中屬於哪一項機制？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1', '接近性原則屬於格式塔視覺組織法則（探討物理距離與認知群組），而非防止無效操作的互動限制機制。')">
+              <span>A. 格式塔接近性原則 (Proximity)</span>
+              <span>→</span>
+            </button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q1', '完全正確！透過置灰按鈕直接凍結無效操作路徑，從根源防止使用者過早送出未完成表單，正是典型的「邏輯約束（Logical Constraint）」機制。')">
+              <span>B. 邏輯約束機制 (Logical Constraints)</span>
+              <span>→</span>
+            </button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1', '自然對應強調的是控制器與受控對象的空間位置一致性（如瓦斯爐開關或轉向方向盤），並非操作狀態的鎖定機制。')">
+              <span>C. 自然對應 (Natural Mapping)</span>
+              <span>→</span>
+            </button>
+          </div>
+          <div id="q1-feedback" class="quiz-feedback"></div>
+        </div>
+        <div class="cite-tag">Evaluation: 點擊選項即可獲得即時理論回饋與解析</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 12: 費茲定律 ==================== -->
+    <div class="slide" data-chapter="第 3 章：操作效率" data-title="費茲定律">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 03 · Interaction Efficiency</div>
+          <h2 class="slide-title">物理操作的數學模型：費茲定律 (Fitts's Law)</h2>
+          <div class="slide-subtitle">手指或游標抵達目標所需的時間，由「目標有多遠」與「目標有多大」決定</div>
+        </div>
+        <div class="math-hero">
+          <div class="math-formula">MT = a + b · log₂(D / W + 1)</div>
+          <div class="math-note">
+            <strong>Shannon-MacKenzie 擴展公式 (MacKenzie, 1992)</strong><br>
+            MT 為移動耗時，D 為目標距離，W 為目標在移動方向上的有效寬度
+          </div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Mathematical Analysis</div>
+            <div class="editorial-col-title">兩大關鍵變數的幾何推論</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>距離 D（Distance）</strong>：起始點至目標邊界的物理距離。<strong>距離愈短，移動時間愈快</strong>。</li>
+                <li><strong>寬度 W（Target Width）</strong>：目標在運動方向上的容許誤差尺寸。<strong>尺寸愈大，獲取難度愈低</strong>。</li>
+                <li><strong>極限邊界（無界邊緣效應）</strong>：桌面系統將工作列與選單貼齊螢幕物理邊緣，滑鼠游標甩不出去，相當於擁有了無限大的等效寬度（W = ∞）。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Mobile Application</div>
+            <div class="editorial-col-title">行動端介面實踐：拇指操作熱區</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>將高頻核心功能置於底部</strong>：單手握持智慧型手機時，螢幕底部處於拇指自然旋轉弧度內，距離 D 最小。</li>
+                <li><strong>視覺大小與觸控熱區解耦</strong>：視覺圖示雖小，但點擊感應範圍（Hit Target）必須依照官方設計規範（Apple HIG 規定 44×44 pt；Google Material 規定 48×48 dp）外擴，人工擴大有效寬度 W。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-20 (Fitts, 1954); SRC-21 (MacKenzie, 1992); SRC-24 (Apple HIG); SRC-25 (Google Material 3)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 13: 席克定律 ==================== -->
+    <div class="slide" data-chapter="第 3 章：操作效率" data-title="席克－海曼定律">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 03 · Interaction Efficiency</div>
+          <h2 class="slide-title">決策時間的對數規律：席克－海曼定律</h2>
+          <div class="slide-subtitle">選項愈多，大腦的認知決策時間呈對數增長，甚至誘發選擇癱瘓</div>
+        </div>
+        <div class="math-hero">
+          <div class="math-formula">RT = a + b · log₂(n + 1)</div>
+          <div class="math-note">
+            <strong>Hick-Hyman Law 決策時間模型</strong><br>
+            RT 為反應時間，n 為等機率選項數量；資訊熵 H 由機率分布決定
+          </div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Theoretical Reality</div>
+            <div class="editorial-col-title">對數效應與資訊熵邊界</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>邊際遞減的決策代價</strong>：從 2 個選項增加至 4 個選項，決策時間顯著倍增；但若畫面一次拋出 50 個未分類選項，大腦常因認知過載而陷入「選擇疲勞」甚至放棄操作。</li>
+                <li><strong>學術嚴謹性澄清</strong>：單純調整選項排列順序並不會直接改變機率分布或降低資訊熵，但將高頻選項置於視覺熱區能顯著縮短視覺搜尋時間。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Interface Solutions</div>
+            <div class="editorial-col-title">UI 設計如何破解選擇癱瘓？</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>漸進式揭露 (Progressive Disclosure)</strong>：首頁僅呈現最常用的 3–5 個核心路徑，將複雜設定與次要選項隱藏於二級視圖。</li>
+                <li><strong>多層次階層分類</strong>：將龐大選單拆解為兩階段選擇（大類別 → 細項），藉由多次小決策取代單次龐大決策。</li>
+                <li><strong>明確的預設推薦 (Default Options)</strong>：為多數使用情境預設最佳配置，降低初次使用者的決策阻力。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-22 (Hick, 1952 On the rate of gain of information); SRC-23 (Hyman, 1953)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 14: 資訊架構四大支柱 ==================== -->
+    <div class="slide" data-chapter="第 3 章：操作效率" data-title="資訊架構四大支柱">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 03 · Information Architecture</div>
+          <h2 class="slide-title">資訊空間的結構學：IA 四大系統支柱</h2>
+          <div class="slide-subtitle">資訊架構（IA）如同建築骨幹，決定了海量資料能否被使用者直覺尋得</div>
+        </div>
+        <div class="flow-steps">
+          <div class="flow-step-item">
+            <div class="flow-step-num">SYSTEM 01</div>
+            <div class="flow-step-title">組織系統 (Organization)</div>
+            <div class="flow-step-body">
+              內容如何被分群？包含客觀維度（時間軸、地理、字母順序）與任務導向維度（使用者角色、專案主題）。
+            </div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">SYSTEM 02</div>
+            <div class="flow-step-title">標籤系統 (Labeling)</div>
+            <div class="flow-step-body">
+              如何以使用者聽得懂的話指稱分類？摒除工程術語與內部黑話，維持全域語意一致性。
+            </div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">SYSTEM 03</div>
+            <div class="flow-step-title">導覽系統 (Navigation)</div>
+            <div class="flow-step-body">
+              引導穿梭空間的工具：全域導覽標籤列、頁籤、麵包屑路徑（隨時解答「我在哪裡、能去哪裡」）。
+            </div>
+          </div>
+          <div class="flow-step-item">
+            <div class="flow-step-num">SYSTEM 04</div>
+            <div class="flow-step-title">搜尋系統 (Search)</div>
+            <div class="flow-step-body">
+              主動檢索機制：模糊比對、錯誤容錯校正與多維度複合篩選（Faceted Search），支援非線性尋路。
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-26 (Rosenfeld, Morville, & Arango, 2015 Information Architecture: For the Web and Beyond); SRC-27 (Morville, 2005)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 15: 使用者流程與資訊氣味 ==================== -->
+    <div class="slide" data-chapter="第 3 章：操作效率" data-title="使用者流程與資訊氣味">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 03 · User Flow & Foraging</div>
+          <h2 class="slide-title">引導探索旅程：使用者流程與資訊氣味</h2>
+          <div class="slide-subtitle">使用者如同在森林中覓食的獵人，依賴介面釋放的微弱線索決定前進方向</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Information Foraging</div>
+            <div class="editorial-col-title">資訊氣味理論 (Information Scent)</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>理論基礎</strong>：Pirolli & Card (1999) 提出資訊覓食理論。人類在瀏覽介面時，如同掠食動物評估獵物氣味般，不斷衡量點擊某個連結的「預期收益」與「認知耗費」。</li>
+                <li><strong>介面意符品質</strong>：若按鈕標籤含糊其詞（例如僅標記「更多」或「繼續」），使用者無法嗅出明確目標路徑，便會猶豫或放棄。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Flow Architecture</div>
+            <div class="editorial-col-title">快樂路徑與例外容錯分支</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>快樂路徑 (Happy Path)</strong>：理想情境下最直接順暢的完成路徑（例如：搜尋商品 → 加入購物車 → 一鍵結帳）。</li>
+                <li><strong>例外路徑 (Exception Paths)</strong>：庫存不足、網路中斷、付款驗證失敗等現實邊界。</li>
+                <li><strong>卓越體驗準則</strong>：永遠提供清晰的狀態回饋與平滑折返機制，絕不讓使用者陷入無法退出的操作死胡同。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-28 (Garrett, 2011 The Elements of User Experience); SRC-29 (Pirolli & Card, 1999 Information Foraging)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 16: 暗黑模式 ==================== -->
+    <div class="slide" data-chapter="第 4 章：好設計與壞設計" data-title="什麼是暗黑模式？">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 04 · Ethics & Anti-Patterns</div>
+          <h2 class="slide-title">操控性設計：暗黑模式 (Deceptive Patterns)</h2>
+          <div class="slide-subtitle">利用人類大腦的啟發式偏誤，誘使使用者做出非其自主意願的利益受損決策</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Taxonomy & Evidence</div>
+            <div class="editorial-col-title">學術框架與實證普遍性</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>概念演進</strong>：Harry Brignull (2010/2023) 提出 Dark Patterns；學界與國際法律監管機構後續推進為定性更精確的<strong>「欺瞞性設計（Deceptive Patterns）」</strong>。</li>
+                <li><strong>Gray et al. (2018) CHI 五大原語</strong>：騷擾 (Nagging)、阻礙 (Obstruction)、潛藏 (Sneaking)、介面干擾 (Interface Interference)、強制行動 (Forced Action)。</li>
+                <li><strong>實證調查數據</strong>：普林斯頓大學 Mathur et al. (2019) 爬取 1.1 萬個購物網站，發現 11.1% 網站存在常態性欺瞞手法。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Cognitive Exploitation</div>
+            <div class="editorial-col-title">大腦認知漏洞如何被系統化收割？</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>收割系統一直覺 (System 1)</strong>：利用條件反射（如亮眼色塊、勾選標籤），在深思熟慮的系統二啟動前誘使點擊。</li>
+                <li><strong>預設效應 (Default Effect)</strong>：面對冗長繁複的表單，使用者高度傾向接受平台預設勾選的昂貴保險或訂閱方案。</li>
+                <li><strong>損失趨避與虛假緊迫 (Loss Aversion)</strong>：以虛假的倒數計時器製造錯失恐懼（FOMO），壓迫理性決策時間。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-32 (Brignull, 2023 Deceptive Patterns); SRC-33 (Gray et al., 2018 The Dark (Patterns) Side of UX); SRC-34 (Mathur et al., 2019)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 17: 常見暗黑模式手法 ==================== -->
+    <div class="slide" data-chapter="第 4 章：好設計與壞設計" data-title="常見暗黑模式手法">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 04 · Ethics & Anti-Patterns</div>
+          <h2 class="slide-title">常見欺瞞手法拆解：侵蝕使用者自主權的介面</h2>
+          <div class="slide-subtitle">從操作摩擦力不對稱到語言情緒勒索，審視商業指標扭曲下的產品變形</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Pattern 01</div>
+            <div class="editorial-col-title">蟑螂捕鼠器 (Roach Motel)</div>
+            <div class="editorial-col-body">
+              <p><strong>進入極為容易，退出極端困難。</strong></p>
+              <ul>
+                <li><strong>操作不對稱</strong>：開通會員僅需一鍵付款；欲取消訂閱卻被深埋在五層選單之後，甚至強制要求上班時間撥打人工客服電話。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Pattern 02</div>
+            <div class="editorial-col-title">確認羞辱 (Confirmshaming)</div>
+            <div class="editorial-col-body">
+              <p><strong>以負面文案對拒絕選項進行情緒勒索。</strong></p>
+              <ul>
+                <li><strong>心理施壓</strong>：彈跳視窗中，拒絕按鈕寫著「<em>不，我不在乎我的個人資產</em>」或「<em>我放棄成為更優秀的人</em>」，企圖引發使用者的內疚與羞恥感。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Pattern 03</div>
+            <div class="editorial-col-title">滴灌定價 (Drip Pricing)</div>
+            <div class="editorial-col-body">
+              <p><strong>逐步追加費用，沉沒成本套牢。</strong></p>
+              <ul>
+                <li><strong>隱性加價</strong>：在訂購流程初期僅展示低廉基礎價格，待使用者花費 15 分鐘填妥詳細個資抵達最後一步時，才悄悄加上高額平台處理費。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-36 (FTC, 2022 Bringing Dark Patterns to Light); SRC-37 (EU Digital Services Act DSA Article 25)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 18: 好壞設計對照 ==================== -->
+    <div class="slide" data-chapter="第 4 章：好設計與壞設計" data-title="設計倫理對照實驗室">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 04 · Ethics & Anti-Patterns</div>
+          <h2 class="slide-title">設計倫理實踐對照：退訂流程的兩種價值取向</h2>
+          <div class="slide-subtitle">好設計保障使用者的知情與退出權利，壞設計以操作壁壘進行挽留</div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-side critical">
+            <div class="compare-tag critical">Deceptive UI · 欺瞞性暗黑流程</div>
+            <div class="compare-title">人為設置高操作摩擦與資訊障礙</div>
+            <ul class="compare-list">
+              <li><strong>按鈕視覺層級嚴重失衡</strong>：「保留方案」為巨大藍色實心按鈕；「確認取消」為極小低對比灰色字體，隱蔽在頁面角落。</li>
+              <li><strong>焦慮施壓與情緒勒索</strong>：強制彈出恐嚇文案：「<em>取消後你將立即失去所有歷史存檔！</em>」。</li>
+              <li><strong>繁複的無效阻斷步驟</strong>：強制填寫五題必填長篇問卷，中途退出則取消無效。</li>
+            </ul>
+          </div>
+          <div class="compare-side exemplar">
+            <div class="compare-tag exemplar">Ethical UI · 人本對等流程</div>
+            <div class="compare-title">透明客觀、對等平衡與充分尊重</div>
+            <ul class="compare-list">
+              <li><strong>雙向對稱的操作權重</strong>：「保留方案」與「確認取消」具有相同的按鈕尺寸、字體規格與清晰文字。</li>
+              <li><strong>客觀誠實告知權益</strong>：「<em>您的方案將於本期結尾到期，在此之前您仍可完整使用既有權益。</em>」</li>
+              <li><strong>一鍵生效與撤銷安全網</strong>：取消確認後立即生效，並在畫面底部彈出操作成功提示，附帶撤銷（Undo）選項。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cite-tag">Legal Regulatory Horizon: 歐盟《數位服務法》(DSA) 第 25 條明文禁止線上介面採用扭曲或損害使用者自主決策之操控手法</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 19: 案例串聯導引 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="三大案例教學定位">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 05 · Case Studies Overview</div>
+          <h2 class="slide-title">三大真實產品案例剖析：理論如何在產業落地？</h2>
+          <div class="slide-subtitle">深入全球數十億人日常依賴的頂尖產品，解構其介面特色與背後的設計權衡</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col" onclick="goToSlide(19)" style="cursor: pointer;">
+            <div class="editorial-col-num">Case Study 01</div>
+            <div class="editorial-col-title">Google Maps</div>
+            <div class="editorial-col-body">
+              <p><strong>空間資訊減負與即時導航</strong></p>
+              <p>如何將全球數十億筆複雜地理資訊，在駕駛高速移動的數秒瞥視內，轉化為安全、清晰且低負擔的導引？</p>
+              <p><strong>關鍵解析</strong>：情境驅動雙層架構、自我中心座標前向映射、多尺度製圖抽象化。</p>
+            </div>
+          </div>
+          <div class="editorial-col" onclick="goToSlide(21)" style="cursor: pointer;">
+            <div class="editorial-col-num">Case Study 02</div>
+            <div class="editorial-col-title">Notion</div>
+            <div class="editorial-col-body">
+              <p><strong>模組化積木與漸進式揭露</strong></p>
+              <p>終端使用者開發工具如何打破傳統文件隱喻？高自由度工作區如何避免給初學者帶來「空白畫布恐懼」？</p>
+              <p><strong>關鍵解析</strong>：積木概念模型、斜線指令漸進式揭露、高黏滯性與早熟承諾代價。</p>
+            </div>
+          </div>
+          <div class="editorial-col" onclick="goToSlide(23)" style="cursor: pointer;">
+            <div class="editorial-col-num">Case Study 03</div>
+            <div class="editorial-col-title">Duolingo</div>
+            <div class="editorial-col-body">
+              <p><strong>微學習迴圈與遊戲化倫理</strong></p>
+              <p>如何將枯燥反人性的語言背誦轉化為手機遊戲？高留存率指標背後隱藏了何種動機侵蝕風險？</p>
+              <p><strong>關鍵解析</strong>：單向關卡步道、微任務支架、多模態即時回饋、過度辯證效應反思。</p>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Methodology: 嚴格區分「產品功能客觀觀察」、「人機互動理論對照」與「分析推論假說」</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 20: Google Maps 亮點 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="Google Maps 空間減負">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Case Study 01 · Google Maps (Spatial IA)</div>
+          <h2 class="slide-title">Google Maps：高速移動情境下的認知減負</h2>
+          <div class="slide-subtitle">面對全球數十億筆空間圖資，如何讓駕駛在數秒瞥視間獲取關鍵指引？</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">01 / Dynamic Surfaces</div>
+            <div class="editorial-col-title">情境驅動的資訊架構退場機制</div>
+            <div class="editorial-col-body">
+              <p><strong>[介面觀察] 查閱與導航狀態的動態重構：</strong></p>
+              <ul>
+                <li><strong>日常探索視圖</strong>：底部常駐五大標籤列（探索、前往、儲存等），提供全域功能入口。</li>
+                <li><strong>進入駕車導航瞬間</strong>：全域標籤列<strong>全數退場消失</strong>，介面動態重構為三大情境表面：頂部「轉彎指引卡」、底部「剩餘時間里程卡」與右側「靜音/路況控制鈕」。</li>
+                <li><strong>[理論對照]</strong>：遵循認知負荷理論，在極端高壓、需保持即時路況專注的情境下，徹底消除不相干的外在認知負荷。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">02 / Egocentric Mapping</div>
+            <div class="editorial-col-title">車頭朝前的空間心智映射</div>
+            <div class="editorial-col-body">
+              <p><strong>[介面觀察] 座標框架的自動切換：</strong></p>
+              <ul>
+                <li><strong>靜態宏觀查閱</strong>：預設「正北朝上 (North-up)」，提供客觀真實的地理空間脈絡。</li>
+                <li><strong>動態行車指引</strong>：自動轉向為「車頭朝前 (Heading-up)」，以<strong>自我中心座標 (Egocentric Frame)</strong> 旋轉地圖。車輛右轉時地圖向左旋轉，畫面右方永遠精確對齊物理現實右方。</li>
+                <li><strong>[理論對照]</strong>：SRC-45 (Klippel et al., 2006) 空間認知研究證實，此舉完全免除了駕駛大腦在高速移動下執行「心智旋轉 (Mental Rotation)」的巨大運算負擔。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-44 (Roth, 2013 製圖學原則); SRC-45 (Klippel et al., 2006 Wayfinding); SRC-46 (Material Design 3 Surfaces)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 21: Google Maps 回饋與限制 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="Google Maps 回饋與邊界">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Case Study 01 · Google Maps (Feedback & Limits)</div>
+          <h2 class="slide-title">即時容錯回饋與物理空間的感知極限</h2>
+          <div class="slide-subtitle">自動錯誤復原機制維繫信任，但感測硬體極限亦帶來挑戰</div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-side exemplar">
+            <div class="compare-tag exemplar">Error Recovery · 零指責容錯機制</div>
+            <div class="compare-title">隱蔽而沉穩的自動修復引導</div>
+            <ul class="compare-list">
+              <li><strong>走錯路無批評警告</strong>：當車輛錯過轉彎，系統從不彈出批評性警示，而是在背景自動重新運算，藍色路徑平滑重繪，沉穩語音提示「<em>正在重新規劃路線...</em>」。</li>
+              <li><strong>主動擁塞避讓推薦</strong>：前方路段壅塞時，主動浮現綠色節省時間卡片，提供雙向對稱按鈕確認。</li>
+              <li><strong>[理論對照]</strong>：落實 Nielsen 易用性原則一（狀態可見性）與原則九（協助辨識與從錯誤復原）。</li>
+            </ul>
+          </div>
+          <div class="compare-side critical">
+            <div class="compare-tag critical">Physical Boundary · 技術邊界與物理挑戰</div>
+            <div class="compare-title">三維立體空間與訊號盲區</div>
+            <ul class="compare-list">
+              <li><strong>垂直高度 (Z軸) 判定模糊</strong>：在雙層高架橋或立體交流道下方，GPS 垂直高度誤差常導致系統誤判車輛位於平面慢車道，持續發出錯誤折返指令。</li>
+              <li><strong>地下隧道訊號遮蔽</strong>：衛星訊號中斷造成光點飄移，需仰賴陀螺儀慣性航位推算。</li>
+              <li><strong>超高密度商圈點擊遮擋</strong>：店家密集區圖標重疊，易誘發觸控目標誤觸。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-47 (Google Maps Tech Blog, 2022); [介面觀察] 基於行動端導航真實情境驗證</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 22: Notion 模組化 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="Notion 模組化積木">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Case Study 02 · Notion (Modular Blocks)</div>
+          <h2 class="slide-title">Notion：模組化積木與漸進式揭露</h2>
+          <div class="slide-subtitle">打破數十年來的打字紙隱喻，將文件編輯轉化為終端使用者開發</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">01 / The Block Concept</div>
+            <div class="editorial-col-title">一切皆為積木 (Everything is a Block)</div>
+            <div class="editorial-col-body">
+              <p><strong>[概念模型打破傳統]：</strong></p>
+              <ul>
+                <li><strong>傳統文書處理隱喻</strong>：連續性虛擬紙張，段落排版仰賴隱藏的排版標記。</li>
+                <li><strong>Notion 原子化模型</strong>：每一行文字、標題、清單、圖片或內嵌資料庫，本質上都是一個個獨立的 <strong>Block 實體積木</strong>。</li>
+                <li><strong>直接操作 (Direct Manipulation)</strong>：使用者可任意拖曳把手變換順序、自由轉換型態，極大縮短了意圖與行動間的執行鴻溝。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">02 / Progressive Disclosure</div>
+            <div class="editorial-col-title">斜線指令 `/` 的視覺極簡降噪</div>
+            <div class="editorial-col-body">
+              <p><strong>[漸進式揭露的經典範例]：</strong></p>
+              <ul>
+                <li><strong>拔除上方 50 個複雜按鈕</strong>：空白頁面僅呈現極淡的提示文字 `Type '/' for commands...`，維持沉浸式書寫的專注度。</li>
+                <li><strong>意圖產生時就地觸發</strong>：鍵入 `/` 符號立即在游標旁展開分類選單，支援模糊過濾（如輸入 `/table`）。</li>
+                <li><strong>[理論對照]</strong>：精確落實席克定律與外在認知負荷消除，將高自由度伴隨的數十項次要功能延後揭露。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-48 (Lieberman et al., 2006 End-User Development); SRC-49 (Notion Documentation, 2024); SRC-22 (Hick, 1952)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 23: Notion 架構與代價 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="Notion 資訊架構與代價">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Case Study 02 · Notion (IA & Cognitive Cost)</div>
+          <h2 class="slide-title">頁面即容器與高自由度背後的認知代價</h2>
+          <div class="slide-subtitle">極致靈活性是一柄雙面刃，伴隨著不可忽視的規劃內耗與重構負擔</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Information Architecture</div>
+            <div class="editorial-col-title">頁面即容器 (Page as Container)</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>打破傳統資料夾對立</strong>：<br>
+                  <strong style="color: var(--text-main);">切勿將 Notion 的頁面等同於傳統檔案資料夾！</strong><br>
+                  傳統資料夾僅是無內容的收納容器；Notion 的每一個 Page 本身既是一篇排版文檔，又能無限向下嵌套子頁面與多維度資料庫。
+                </li>
+                <li><strong>空間定位錨點</strong>：頂部常駐全域麵包屑導覽（Breadcrumbs），讓使用者在多層嵌套中隨時能一鍵回溯至父層目錄，消除迷航。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Cognitive Dimensions</div>
+            <div class="editorial-col-title">認知維度理論 (CDN) 深度審視</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>早熟承諾 (Premature Commitment)</strong>：自由度過高迫使初學者在下筆前必須先做出架構決策（「我該用一般 Page 還是 Table？」），引發空白畫布焦慮。</li>
+                <li><strong>高黏滯性 (High Viscosity)</strong>：若前期架構缺乏規劃，後期將散落的各頁筆記批次重構成結構化資料庫的代價極為高昂。</li>
+                <li><strong>次要標記失控</strong>：自由設定的 Icon 與 Cover 在團隊協作時容易陷入視覺雜亂。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-50 (Green & Petre, 1996 Cognitive Dimensions of Notations CDN); SRC-26 (Rosenfeld et al., 2015)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 24: Duolingo 微學習 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="Duolingo 微學習與回饋">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Case Study 03 · Duolingo (Learning Flow)</div>
+          <h2 class="slide-title">Duolingo：微學習路徑與多模態即時回饋</h2>
+          <div class="slide-subtitle">將反人性的枯燥語法背誦，重構成讓人欲罷不能的遊戲化闖關歷程</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">01 / The Path</div>
+            <div class="editorial-col-title">單向關卡步道與微任務支架</div>
+            <div class="editorial-col-body">
+              <p><strong>[介面演進與任務拆解]：</strong></p>
+              <ul>
+                <li><strong>替使用者做決定</strong>：廢除早期龐大複雜的分支技能樹，全面收斂為垂直單一的序列化關卡步道（The Path）。</li>
+                <li><strong>格式塔連續性消弭選擇障礙</strong>：每次打開 App，只有唯一的下一個關卡在發光跳動，消除「不知道該複習哪課」的選擇癱瘓。</li>
+                <li><strong>微型化任務支架 (Scaffolding)</strong>：題目拆解為數分鐘即可完成的微組塊，並大量運用「單字積木點選」代替空白鍵盤盲打（落實認知心理學「辨識重於回憶」原則）。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">02 / Multimodal Feedback</div>
+            <div class="editorial-col-title">多模態即時正反回饋設計</div>
+            <div class="editorial-col-body">
+              <p><strong>[感官刺激與低挫折容錯]：</strong></p>
+              <ul>
+                <li><strong>答對瞬間的感官放大</strong>：點擊檢查瞬間彈出鮮綠色底部底條、奏響清脆上升和弦、伴隨觸覺引擎震動，將多巴胺回饋即時最大化。</li>
+                <li><strong>答錯時的低挫折平滑修復</strong>：柔和粉紅底色顯示正確解答，題目不立即中斷測驗，而是悄悄排至單元結尾重新作答，保護脆弱的學習信心。</li>
+                <li><strong>拇指舒適區</strong>：核心檢查大按鈕固定貼齊螢幕物理底部，未作答時呈現灰色邏輯約束。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-53 (Duolingo Blog, 2023 Designing The Path); SRC-12 (Sweller, 1988); SRC-10 (Norman, 2013)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 25: Duolingo 動機反思 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="Duolingo 遊戲化雙面刃">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Case Study 03 · Duolingo (Motivation Ethics)</div>
+          <h2 class="slide-title">遊戲化雙面刃：過度辯證效應與動機異化</h2>
+          <div class="slide-subtitle">使用者每天準時簽到打開軟體，真的代表他學會了這門外語嗎？</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Gamification Mechanics</div>
+            <div class="editorial-col-title">PBL 激勵與沉沒成本綁定</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>點數、徽章、排行榜 (PBL)</strong>：每週 30 人動態升降級聯盟、限時雙倍經驗藥水。</li>
+                <li><strong>連勝紀錄 (Streak Counter)</strong>：首頁最醒目的不是掌握了多少單字量，而是「連續學習天數」計數器。連勝天數轉化為使用者的沉沒成本（Sunk Cost）。</li>
+                <li><strong>[理論對應]</strong>：SRC-54 (Nir Eyal, 2014) Hook 習慣迴圈（觸發 → 行動 → 多變酬賞 → 投入）。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Ethical Reflection</div>
+            <div class="editorial-col-title">過度辯證效應 (Overjustification Effect)</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>Deci et al. (1999) 心理學元分析</strong>：過強的有形外在物質獎勵（點數、火苗），會無情侵蝕個體原本對語言探索的「內在求知動機」。</li>
+                <li><strong>刷分代替真實學習</strong>：使用者為保住連續天數或避免聯盟降級，傾向刻意反覆做最簡單的低階單元刷分，迴避真正燒腦的高階語法。</li>
+                <li><strong>反思警思</strong>：<strong style="color:var(--text-main);">「高日活用戶數據不等於學習成效」</strong>。過度販售連勝凍結卡，游走於利用損失趨避的暗黑邊界。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-51 (Dicheva et al., 2015 Gamification in Education); SRC-52 (Deci et al., 1999 Meta-analysis); SRC-54 (Eyal, 2014)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 26: 互動測驗 2 ==================== -->
+    <div class="slide" data-chapter="第 5 章：產品案例解析" data-title="案例對照測驗">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Interactive Checkpoint 02 · Case Studies Integration</div>
+          <h2 class="slide-title">隨堂思辨：龐大選項的認知減負策略</h2>
+          <div class="slide-subtitle">若要為多達 40 種篩選標籤設計介面，最應借鑑哪一項產品架構策略？</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">問題：若團隊正在設計一款大型電商 App，商品列表包含超過 40 種細項篩選條件。為了避免初次進入的使用者產生嚴重的「選擇癱瘓」與龐大認知負擔，團隊最應該借鑑 Notion 的哪一項介面設計策略？</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2', '過度辯證效應探討的是外在物質獎勵對內在動機的侵蝕機制，無法直接解決介面選項過多的決策負擔。')">
+              <span>A. 引入每週聯盟排行榜與積分競賽機制 (PBL)</span>
+              <span>→</span>
+            </button>
+            <button class="quiz-opt" onclick="checkQuiz(this, true, 'q2', '完全正確！Notion 透過斜線指令 `/` 將數十種次要功能延後至意圖產生時才展開，正是運用「漸進式揭露 (Progressive Disclosure)」消弭初期外在認知負荷的典範。')">
+              <span>B. 漸進式揭露 (Progressive Disclosure)——初期隱藏次要選項，意圖產生時才就地展開</span>
+              <span>→</span>
+            </button>
+            <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2', '自我中心座標映射是空間地圖導航的旋轉策略，與文字篩選選單的資訊架構無關。')">
+              <span>C. 將篩選按鈕轉為車頭朝前之自我中心座標映射</span>
+              <span>→</span>
+            </button>
+          </div>
+          <div id="q2-feedback" class="quiz-feedback"></div>
+        </div>
+        <div class="cite-tag">Evaluation: 點擊選項即可獲得即時理論回饋與解析</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 27: 啟發式 vs 真人測試 ==================== -->
+    <div class="slide" data-chapter="第 6 章：如何評估 App？" data-title="科學評估雙軌法">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 06 · Usability Evaluation</div>
+          <h2 class="slide-title">科學評估方法論：啟發式評估 vs. 真人測試</h2>
+          <div class="slide-subtitle">打破「設計者自我感覺良好」的雙軌驗證武器：專家審查與行為觀察</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Method 01</div>
+            <div class="editorial-col-title">啟發式評估 (Heuristic Evaluation)</div>
+            <div class="editorial-col-body">
+              <p><strong>專家審查法（折扣易用性工程）</strong></p>
+              <ul>
+                <li><strong>執行主體</strong>：由 3–5 位具備人機互動背景的專家獨立審查介面。</li>
+                <li><strong>依據準則</strong>：比對公認的易用性原則清單（如 Nielsen 十大原則）。</li>
+                <li><strong>學術邊界與局限</strong>：速度極快、成本低廉，能迅速掃除 70% 常見介面硬傷，<strong>但絕對無法完全預測真實使用者的非理性情境，不能替代真人測試</strong>。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Method 02</div>
+            <div class="editorial-col-title">真人易用性測試 (Usability Testing)</div>
+            <div class="editorial-col-body">
+              <p><strong>實證觀察法（客觀行為研究）</strong></p>
+              <ul>
+                <li><strong>執行主體</strong>：招募具代表性的真實目標客群進行任務操作。</li>
+                <li><strong>放聲思考法 (Think-Aloud Protocol)</strong>：受試者邊操作邊說出心中所想，反映工作記憶中的即時歷程（SRC-41 Ericsson & Simon, 1993）。</li>
+                <li><strong>研究鐵律</strong>：<strong style="color:var(--text-main);">「觀察使用者的客觀行為，而非聽信其事後修飾的訪談意見」</strong>。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-38 (Nielsen, 1994); SRC-39 (Nielsen & Molich, 1990); SRC-41 (Ericsson & Simon, 1993); SRC-42 (Dumas & Redish, 1999)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 28: Nielsen 十大原則 ==================== -->
+    <div class="slide" data-chapter="第 6 章：如何評估 App？" data-title="Nielsen 十大易用性原則">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 06 · Usability Evaluation</div>
+          <h2 class="slide-title">人機介面經典指標：Jakob Nielsen 十大原則</h2>
+          <div class="slide-subtitle">經過數十年實證淬鍊的啟發式評估檢查清單（Heuristic Checklist）</div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Principles 01–05</div>
+            <div class="editorial-col-title">基礎狀態與控制自由</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>1. 系統狀態可見性</strong>：系統應在合理時間內透過適當回饋讓使用者知曉狀態。</li>
+                <li><strong>2. 符合真實世界對照</strong>：使用使用者熟悉的日常語言、概念與空間對應。</li>
+                <li><strong>3. 使用者控制與自由</strong>：提供清晰的「緊急出口」，支援 Undo 與 Redo。</li>
+                <li><strong>4. 一致性與標準</strong>：遵循相同用詞、操作慣例與跨平台規範。</li>
+                <li><strong>5. 防錯機制</strong>：在操作發生前透過約束與二次確認消弭嚴重失誤。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Principles 06–10</div>
+            <div class="editorial-col-title">認知減負與錯誤修復</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>6. 辨識重於回憶</strong>：將物件、操作與選項視覺化，不要強迫使用者背誦資訊。</li>
+                <li><strong>7. 彈性與使用效率</strong>：為專家提供快捷鍵與宏指令，對新手保持簡約自明。</li>
+                <li><strong>8. 美感與簡約設計</strong>：畫面不應包含無關或極少使用的資訊（避免稀釋重要性）。</li>
+                <li><strong>9. 協助辨識與從錯誤復原</strong>：用白話清楚說明問題癥結，並給出具體解決路徑。</li>
+                <li><strong>10. 說明文件與支援</strong>：提供容易檢索、聚焦具體任務步驟的輔助資訊。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-38 (Jakob Nielsen, 1994 Enhancing the Explanatory Power of Usability Heuristics)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 29: 破除 5 人測試神話 ==================== -->
+    <div class="slide" data-chapter="第 6 章：如何評估 App？" data-title="破除 5 人測試神話">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 06 · Usability Evaluation</div>
+          <h2 class="slide-title">破除迷思：「只要測 5 個人就能發現 85% 問題」？</h2>
+          <div class="slide-subtitle">深入數學模型真相！探討二項分布背後的嚴格成立條件與失效情境</div>
+        </div>
+        <div class="math-hero">
+          <div class="math-formula">ProblemsFound(n) = N · (1 - (1 - λ)ⁿ)</div>
+          <div class="math-note">
+            <strong>Nielsen & Landauer (1993) 帕松問題發現模型</strong><br>
+            N 為介面潛在問題總量，λ 為平均單人發現率；當 λ ≈ 0.31 且使用者高度同質時，n=5 確實約為 85%
+          </div>
+        </div>
+        <div class="layout-columns-2">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Statistical Premise</div>
+            <div class="editorial-col-title">論文真正倡導的迭代測試精神</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>常被曲解的結論</strong>：原作者從未主張「任何系統永遠只要測 5 個人」。</li>
+                <li><strong>核心倡導</strong>：反對在專案末期投入龐大預算進行單次 30 人的大規模測試；提倡將資源分散為<strong>「每次 3–5 人的多次小規模迭代測試（Iterative Testing）」</strong>，邊改邊測效率最高。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col secondary">
+            <div class="editorial-col-num">Boundary Conditions</div>
+            <div class="editorial-col-title">「5 人神話」失靈的三大邊界情境</div>
+            <div class="editorial-col-body">
+              <ul>
+                <li><strong>高度專業複雜系統</strong>：醫療手術台、半導體機台等領域，問題深度隱蔽，單人發現率 λ 遠小於 0.31，5 人測試常抓不到一半問題。</li>
+                <li><strong>客群高度異質</strong>：若產品涵蓋新手與老手，<strong>每個獨立客群必須各自招募 3–5 人</strong>，不可混為一談。</li>
+                <li><strong>定量基準測試 (Benchmarking)</strong>：測量平均操作秒數或計算 SUS 得分時，需要 30–40 人以上的統計樣本。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Source: SRC-43 (Nielsen & Landauer, 1993 A mathematical model of the finding of usability problems); SRC-40 (Brooke, 1996 SUS)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 30: 核心解答總結 ==================== -->
+    <div class="slide" data-chapter="第 7 章：總結與展望" data-title="核心解答金字塔">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 07 · Conclusion</div>
+          <h2 class="slide-title">核心解答：為什麼有些 App 特別好用？</h2>
+          <div class="slide-subtitle">卓越體驗從來不是單一魔法，而是跨越認知、效率與倫理的三層金字塔</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Foundation Layer</div>
+            <div class="editorial-col-title">01. 符合人腦心智模型（可理解）</div>
+            <div class="editorial-col-body">
+              <p>尊重人類感知演化的客觀規律：</p>
+              <ul>
+                <li>清晰自明的意符（Signifiers）</li>
+                <li>自然的空間空間對應（Mapping）</li>
+                <li>即時多模態回饋與格式塔群組秩序</li>
+                <li>將外在認知負荷降至趨近於零</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Structural Layer</div>
+            <div class="editorial-col-title">02. 極低物理操作摩擦（低負擔）</div>
+            <div class="editorial-col-body">
+              <p>人因互動工程的精密實踐：</p>
+              <ul>
+                <li>依據費茲定律將核心操作置於拇指熱區</li>
+                <li>利用席克定律與漸進式揭露消除選擇癱瘓</li>
+                <li>以結構化資訊架構（IA）引導任務流程</li>
+                <li>隨時提供撤銷（Undo）安全網</li>
+              </ul>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Ethical Layer</div>
+            <div class="editorial-col-title">03. 尊重人本自主權（值得信賴）</div>
+            <div class="editorial-col-body">
+              <p>抵制短視誘餌與暗黑欺瞞：</p>
+              <ul>
+                <li>不利用認知偏誤收割短期商業數據</li>
+                <li>維持退訂與訂閱雙向操作對稱</li>
+                <li>賦予使用者長期的掌控感與知情權</li>
+                <li>科技服務人性，而非掠奪注意力</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Synthesis: 認知心理學是基石，人因工程是骨架，人文倫理是靈魂</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 31: 設計行動心法 ==================== -->
+    <div class="slide" data-chapter="第 7 章：總結與展望" data-title="初學者的三大心法">
+      <div class="slide-content-wrapper">
+        <div class="slide-header">
+          <div class="slide-meta">Chapter 07 · Conclusion</div>
+          <h2 class="slide-title">初學者必備的三大設計思維心法</h2>
+          <div class="slide-subtitle">帶著這份科學視角，重新審視身邊的每一個數位產品與互動細節</div>
+        </div>
+        <div class="layout-columns-3">
+          <div class="editorial-col">
+            <div class="editorial-col-num">Mantra 01</div>
+            <div class="editorial-col-title">你不是你的使用者</div>
+            <div class="editorial-col-body">
+              <p><strong>擺脫「知識的詛咒」與「虛假共識效應」。</strong></p>
+              <p>當你親手設計或深入參與某個系統時，你便永遠失去了「初次接觸者」的純真視角。永遠以真實受試者的客觀行為數據來檢驗主觀直覺。</p>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Mantra 02</div>
+            <div class="editorial-col-title">減法勝過加法</div>
+            <div class="editorial-col-body">
+              <p><strong>優秀的設計不是添加所有可能功能，而是消除多餘阻礙。</strong></p>
+              <p>在任務推進的正確時刻，剛好只給予使用者需要的資訊。留白不是空白，而是對使用者極其珍貴注意力資源的最高敬意。</p>
+            </div>
+          </div>
+          <div class="editorial-col">
+            <div class="editorial-col-num">Mantra 03</div>
+            <div class="editorial-col-title">科技服務人性，而非利用弱點</div>
+            <div class="editorial-col-body">
+              <p><strong>能力愈強，責任愈重。</strong></p>
+              <p>熟稔認知心理學的設計者能夠輕易操縱使用者行為，但真正的專業成就建立在賦能與透明之上。讓軟體成為增強人類潛能的工具，而非囚禁時間的監獄。</p>
+            </div>
+          </div>
+        </div>
+        <div class="cite-tag">Ethical Commitment: 以同理心為起點，以科學實證為方法，以人本福祉為歸宿</div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 32: 參考文獻與致謝 ==================== -->
+    <div class="slide" data-chapter="第 7 章：總結與展望" data-title="參考文獻與結語">
+      <div class="slide-content-wrapper" style="justify-content: center; max-width: 1200px;">
+        <div class="slide-meta" style="margin-bottom: 20px;">References & Acknowledgements</div>
+        <h2 style="font-family: var(--font-serif); font-size: 52px; font-weight: 700; color: var(--text-main); margin-bottom: 20px;">
+          好的設計，讓科技悄然隱形
+        </h2>
+        <p style="font-size: 24px; color: var(--text-muted); line-height: 1.6; margin-bottom: 32px;">
+          本課程教學內容奠基於人機互動經典文獻、認知心理學實證研究與官方介面工程規範，完整論述與閱讀筆記均收錄於專案知識庫。
+        </p>
+        <div style="background: #ffffff; border: 1px solid var(--border-subtle); padding: 24px 32px; font-size: 16px; color: var(--text-muted); line-height: 1.7; font-family: var(--font-mono); margin-bottom: 32px;">
+          <strong>Core Literature Citations (App UI/UX Wiki):</strong><br>
+          • ISO 9241-11:2018 (SRC-02) / ISO 9241-210:2019 (SRC-01)<br>
+          • Don Norman (1988/2013) The Design of Everyday Things (SRC-09, SRC-10)<br>
+          • John Sweller (1988/2011) Cognitive Load Theory (SRC-12, SRC-13)<br>
+          • Paul Fitts (1954) & I. S. MacKenzie (1992) Fitts's Law (SRC-20, SRC-21)<br>
+          • W. E. Hick (1952) & Ray Hyman (1953) Hick-Hyman Law (SRC-22, SRC-23)<br>
+          • Jakob Nielsen (1990/1994) Usability Heuristics & Mathematical Models (SRC-38, SRC-39, SRC-43)<br>
+          • Colin Gray et al. (2018 CHI) & Arunesh Mathur et al. (2019 CSCW) Deceptive Patterns (SRC-33, SRC-34)<br>
+          • Case Research: Roth (2013, SRC-44), Klippel (2006, SRC-45), Lieberman (2006, SRC-48), Green (1996, SRC-50), Dicheva (2015, SRC-51), Deci (1999, SRC-52), Eyal (2014, SRC-54).
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <button class="hud-btn" style="padding: 12px 28px; font-size: 16px; font-weight: 600; background: var(--text-main); color: #ffffff;" onclick="goToSlide(0)">
+            ↺ 重新瀏覽簡報
+          </button>
+          <button class="hud-btn" style="padding: 12px 28px; font-size: 16px;" onclick="openToc()">
+            目錄索引 (M)
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Keynote Floating HUD Controls (Bottom-Right) -->
+  <div class="hud-controls">
+    <span id="current-chapter-tag" class="hud-chapter-badge">導引</span>
+    <button id="prev-btn" class="hud-btn" onclick="prevSlide()" title="上一頁 (← / Space / PageUp)" disabled>←</button>
+    <div id="page-indicator" class="hud-indicator">01 / 32</div>
+    <button id="next-btn" class="hud-btn" onclick="nextSlide()" title="下一頁 (→ / PageDown)">→</button>
+    <button id="open-toc-btn" class="hud-btn" title="章節目錄 (M)">目錄</button>
+    <button id="fullscreen-btn" class="hud-btn" onclick="toggleFullscreen()" title="全螢幕模式 (F)">全螢幕</button>
+  </div>
+
+  <!-- Modal: Table of Contents -->
+  <div id="toc-modal" class="modal-overlay" onclick="closeTocOnOverlay(event)">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title">簡報完整章節導覽</div>
+        <button class="modal-close" onclick="closeToc()">✕</button>
+      </div>
+      <div id="toc-list" class="toc-grid">
+        <!-- Dynamically Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript: Keynote Presentation Engine & Auto-Scaler -->
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    const pageIndicator = document.getElementById('page-indicator');
+    const progressBar = document.getElementById('progress-bar');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const chapterTag = document.getElementById('current-chapter-tag');
+    const tocModal = document.getElementById('toc-modal');
+    const tocList = document.getElementById('toc-list');
+    const slideStage = document.getElementById('slide-stage');
+
+    // 16:9 Responsive Auto-Scaling Engine
+    function resizeStage() {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const baseWidth = 1600;
+      const baseHeight = 900;
+
+      // Scale to fit screen with 96% padding margin
+      const scaleX = windowWidth / baseWidth;
+      const scaleY = windowHeight / baseHeight;
+      const fitScale = Math.min(scaleX, scaleY) * 0.96;
+
+      slideStage.style.transform = 'scale(' + fitScale + ')';
+    }
+
+    window.addEventListener('resize', resizeStage);
+    window.addEventListener('DOMContentLoaded', resizeStage);
+
+    // Build Table of Contents
+    function buildToc() {
+      tocList.innerHTML = '';
+      slides.forEach((s, idx) => {
+        const item = document.createElement('div');
+        item.className = 'toc-item' + (idx === currentSlide ? ' current' : '');
+        const ch = s.getAttribute('data-chapter') || '簡報頁面';
+        const title = s.getAttribute('data-title') || (s.querySelector('.slide-title') ? s.querySelector('.slide-title').innerText : '簡報內容');
+        
+        const numDiv = document.createElement('div');
+        numDiv.className = 'toc-item-num';
+        numDiv.innerText = String(idx + 1).padStart(2, '0') + ' · ' + ch;
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'toc-item-title';
+        titleDiv.innerText = title;
+
+        item.appendChild(numDiv);
+        item.appendChild(titleDiv);
+        item.onclick = () => {
+          goToSlide(idx);
+          closeToc();
+        };
+        tocList.appendChild(item);
+      });
+    }
+
+    function updatePresentation() {
+      slides.forEach((s, idx) => {
+        if (idx === currentSlide) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      // Update Page Indicator
+      const pageNum = String(currentSlide + 1).padStart(2, '0');
+      const totalNum = String(totalSlides).padStart(2, '0');
+      pageIndicator.innerText = pageNum + ' / ' + totalNum;
+
+      // Update Progress Bar
+      const pct = (currentSlide / (totalSlides - 1)) * 100;
+      progressBar.style.width = pct + '%';
+
+      // Update Chapter Tag
+      const currentChapter = slides[currentSlide].getAttribute('data-chapter') || 'UI/UX Masterclass';
+      chapterTag.innerText = currentChapter;
+
+      // Update Button State
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+
+      buildToc();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updatePresentation();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updatePresentation();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides) {
+        currentSlide = index;
+        updatePresentation();
+      }
+    }
+
+    function openToc() {
+      tocModal.classList.add('open');
+    }
+
+    function closeToc() {
+      tocModal.classList.remove('open');
+    }
+
+    function closeTocOnOverlay(e) {
+      if (e.target === tocModal) {
+        closeToc();
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log('Error attempting to enable full-screen mode:', err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'Home') {
+        goToSlide(0);
+      } else if (e.key === 'End') {
+        goToSlide(totalSlides - 1);
+      } else if (e.key === 'm' || e.key === 'M') {
+        if (tocModal.classList.contains('open')) {
+          closeToc();
+        } else {
+          openToc();
+        }
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'Escape') {
+        closeToc();
+      }
+    });
+
+    // Touch Swipe Support for Mobile/Tablet
+    let touchStartX = 0;
+    let touchEndX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) {
+        nextSlide();
+      }
+      if (touchEndX > touchStartX + 50) {
+        prevSlide();
+      }
+    }, false);
+
+    document.getElementById('open-toc-btn').addEventListener('click', openToc);
+
+    // Interactive Quiz Logic
+    function checkQuiz(btn, isCorrect, qId, feedbackText) {
+      const parent = btn.parentElement;
+      const buttons = parent.querySelectorAll('.quiz-opt');
+      buttons.forEach(b => {
+        b.classList.remove('correct', 'wrong');
+        b.disabled = true;
+      });
+
+      const fb = document.getElementById(qId + '-feedback');
+      if (isCorrect) {
+        btn.classList.add('correct');
+        fb.className = 'quiz-feedback show-correct';
+        fb.innerHTML = '<strong>[正確解答]</strong> ' + feedbackText;
+      } else {
+        btn.classList.add('wrong');
+        fb.className = 'quiz-feedback show-wrong';
+        fb.innerHTML = '<strong>[觀念釐清]</strong> ' + feedbackText;
+      }
+    }
+
+    // Initialize Presentation
+    resizeStage();
+    updatePresentation();
+  </script>
+</body>
+</html>
